@@ -31,3 +31,7 @@ compile:
 	ar -rcv memalloc.a  *.o
 	$(CC) $(HEADERPATH) $(CFLAGS) -shared memalloc.c -o memalloc.so
 
+linux_debug:
+	$(CC) -DDEBUG $(HEADERPATH) $(CFLAGS) -static -c memalloc.c linux.c
+	ar -rcv memalloc.a  *.o
+	$(CC) -DDEBUG $(HEADERPATH) $(CFLAGS) -shared memalloc.c linux.c -o memalloc.so

@@ -87,6 +87,7 @@ void *malloc(size_t size)
 
 	pthread_mutex_lock(&global_malloc_lock);
 	header = get_free_block(size);
+
 	if(header) {
 		header->s.is_free = 0;
 		pthread_mutex_unlock(&global_malloc_lock);
