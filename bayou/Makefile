@@ -1,0 +1,3 @@
+NAME = bayou
+CC = gcc
+
