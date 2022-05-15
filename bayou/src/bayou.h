@@ -8,4 +8,6 @@
 // insert after the currently pointed element
 void *bayou_add_element(struct bayou *bayou);
 
+bool bayou_init();
+
 #endif
