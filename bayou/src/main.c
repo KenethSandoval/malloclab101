@@ -1,3 +1,4 @@
+#include "../sub/termbox_next/src/termbox.h"
 #include <memoryhandles/mh.h>
 #include <stdint.h>
 #include <unistd.h>
@@ -6,7 +7,7 @@ uint32_t limit_left = '[';
 uint32_t limit_right = ']';
 uint32_t slot = 0x2588; // '█'
 
-static void prev_element(struct mh *bayou, uint16_t count) {
+/*static void prev_element(struct mh *bayou, uint16_t count) {
   for (uint16_t i = 0; i < count; ++i) {
     mh_element_prev(bayou);
   }
@@ -47,6 +48,41 @@ static void init_tree(struct mh *bayou, struct mh_hole *holes,
   mh_branch_child(bayou);
   mh_element_set(bayou, count / 2);
   init_branch(bayou, len, start);
+
+  start += len;
+  prev_element(bayou, count);
+  init_branch(bayou, len, start);
+
+  start += len;
+  mh_branch_parent(bayou);
+  mh_branch_child(bayou);
+  mh_element_set(bayou, count / 2);
+  init_branch(bayou, len, start);
 }
 
-int main() { return 0; }
+void rm_branches(struct mh *bayou) {
+  mh_branch_root(bayou);
+  mh_branch_child(bayou);
+  mh_element_set(bayou, 0);
+  mh_rm_element(bayou);
+  mh_branch_child(bayou);
+  mh_branch_child(bayou);
+  mh_branch_sibling(bayou);
+  mh_element_set(bayou, 0);
+  mh_rm_element(bayou);
+  }*/
+
+void dram_limits() {
+  tb_change_cell(0, 0, limit_left, TB_WHITE, TB_BLACK);
+  tb_change_cell(51, 0, limit_right, TB_WHITE, TB_BLACK);
+
+  tb_change_cell(0, 1, limit_left, TB_WHITE, TB_BLACK);
+  tb_change_cell(9, 1, limit_right, TB_WHITE, TB_BLACK);
+}
+
+int main() {
+  tb_init();
+  tb_clear();
+  dram_limits();
+  return 0;
+}
