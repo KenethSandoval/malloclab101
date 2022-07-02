@@ -9,8 +9,10 @@ OBJD = obj
 SRCD = src
 SUBD = sub
 
-INCL = -I$(SRCD) -I$(SUBD)/termbox_next/src 
+INCL = -I$(SRCD) -I /usr/include/memoryhandles -I$(SUBD)/termbox_next/src 
 SRCS = $(SRCD)/main.c
+SRCS += /usr/include/memoryhandles/mh.c
+SRCS += /usr/include/memoryhandles/short.c
 
 SRCS_OBJS := $(patsubst %.c,$(OBJD)/%.o,$(SRCS))
 SRCS_OBJS += $(SUBD)/termbox_next/bin/termbox.a
