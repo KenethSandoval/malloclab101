@@ -7,7 +7,7 @@ uint32_t limit_left = '[';
 uint32_t limit_right = ']';
 uint32_t slot = 0x2588; // '█'
 
-/*static void prev_element(struct mh *bayou, uint16_t count) {
+static void prev_element(struct mh *bayou, uint16_t count) {
   for (uint16_t i = 0; i < count; ++i) {
     mh_element_prev(bayou);
   }
@@ -70,9 +70,9 @@ void rm_branches(struct mh *bayou) {
   mh_branch_sibling(bayou);
   mh_element_set(bayou, 0);
   mh_rm_element(bayou);
-  }*/
+}
 
-void dram_limits() {
+void draw_limits() {
   tb_change_cell(0, 0, limit_left, TB_WHITE, TB_BLACK);
   tb_change_cell(51, 0, limit_right, TB_WHITE, TB_BLACK);
 
@@ -80,9 +80,77 @@ void dram_limits() {
   tb_change_cell(9, 1, limit_right, TB_WHITE, TB_BLACK);
 }
 
+bool render_branch(struct mh *bayou, struct mh_branch *selected_branch,
+                   void *ptr) {
+  for (uint8_t i = 0; i < selected_branch->element_len; i++) {
+    tb_change_cell((((uint16_t *)selected_branch->elements) -
+                    ((uint16_t *)bayou->pool_elements.buf)) +
+                       i + 1,
+                   0, slot, TB_WHITE, TB_BLACK);
+  }
+
+  tb_change_cell(selected_branch -
+                     ((struct mh_branch *)bayou->pool_branches.buf) + 1,
+                 1, slot, TB_WHITE, TB_BLACK);
+
+  return true;
+}
+
+void draw_tree_mem(struct mh *bayou) {
+  draw_limits();
+  mh_branch_root(bayou);
+  mh_branch_exec(bayou, render_branch, NULL);
+}
+
+void defrag_loop(struct mh *bayou) {
+  while (mh_should_defrag(bayou)) {
+    sleep(1);
+    mh_defrag(bayou);
+
+    tb_clear();
+    draw_tree_mem(bayou);
+    tb_present();
+  }
+}
+
 int main() {
+  struct mh bayou;
+  struct mh_hole holes[10];
+  struct mh_branch branches[10];
+  void *elements[50];
+
+  init_tree(&bayou, holes, branches, elements, 10, 10, 50);
+
   tb_init();
   tb_clear();
-  dram_limits();
+  draw_tree_mem(&bayou);
+  tb_present();
+
+  sleep(1);
+
+  rm_branches(&bayou);
+  tb_clear();
+  draw_tree_mem(&bayou);
+  tb_present();
+
+  defrag_loop(&bayou);
+
+  mh_branch_root(&bayou);
+  mh_branch_child(&bayou);
+  mh_branch_child(&bayou);
+  mh_branch_child(&bayou);
+  mh_rm_branch(&bayou);
+
+  sleep(1);
+
+  tb_clear();
+  draw_tree_mem(&bayou);
+  tb_present();
+
+  defrag_loop(&bayou);
+
+  sleep(3);
+
+  tb_shutdown();
   return 0;
 }

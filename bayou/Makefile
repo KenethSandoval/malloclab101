@@ -9,7 +9,7 @@ OBJD = obj
 SRCD = src
 SUBD = sub
 
-INCL = -I$(SRCD) -I$(SUBD)/termbox_next/src
+INCL = -I$(SRCD) -I$(SUBD)/termbox_next/src 
 SRCS = $(SRCD)/main.c
 
 SRCS_OBJS := $(patsubst %.c,$(OBJD)/%.o,$(SRCS))
